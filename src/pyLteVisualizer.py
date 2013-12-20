@@ -78,6 +78,9 @@ class BW:
         raise Exception("Unknown delta_f={0}".format(delta_f))
 
 class ReTypeMatrix:
+    '''
+    Represents a matrix of Resource Elements. It's fast to grab any column of this matrix, but not rows.
+    '''
     def __init__(self, rowDimension, columnDimension):
         self.rowDimension = rowDimension
         self.columnDimension = columnDimension
@@ -86,6 +89,9 @@ class ReTypeMatrix:
         return self.m[columnIndex]
 
 class ReTypeSubframe(ReTypeMatrix):
+    '''
+    Represents a subframe.
+    '''
     def __init__(self, bw, cpType, delta_f, sfType, longSf, numOfPdcchSymbols):
         self.bw = bw
         self.cpType = cpType
