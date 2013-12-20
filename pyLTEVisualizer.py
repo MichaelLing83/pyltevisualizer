@@ -669,9 +669,9 @@ class Config:
     #@-others
 #@+node:Michael.20120322092817.1929: *3* class ImageDrawer
 from copy import deepcopy
-import md5
+#import md5
 from time import time
-import Image, ImageDraw
+from PIL import Image, ImageDraw
 
 class ImageDrawer:
     def __init__(self, config, re_lattice, re_size_lattice):
@@ -713,7 +713,7 @@ class ImageDrawer:
                 self.dc.line( line, penclr )
                 # draw vertical lines
                 for l in range(14):
-                    if self.re_size_lattice.has_key( (frame,subframe,l,0) ):
+                    if (frame,subframe,l,0) in self.re_size_lattice:
                         current_symbol_length = round(self.re_size_lattice[(frame,subframe,l,0)][0]/(2048+144.)*self.config['cell_width'])
                         total_width += current_symbol_length
                         subframe_width += current_symbol_length
@@ -795,7 +795,7 @@ class ImageDrawer:
         for frame in range(self.config['start_SFN'],self.config['start_SFN']+self.config['frame_num']):
             for subframe in range(10):
                 for l in range(7*2):
-                    if self.re_size_lattice.has_key( (frame,subframe,l,0) ):
+                    if (frame,subframe,l,0) in self.re_size_lattice:
                         y = 0
                         width, height = self.re_size_lattice[(frame,subframe,l,0)]
                         width = round(width/(2048+144.)*self.config['cell_width'])
@@ -861,7 +861,7 @@ class ImageDrawer:
         for frame in range(self.config['start_SFN'],self.config['start_SFN']+self.config['frame_num']):
             for subframe in range(10):
                 for l in range(2*7):
-                    if self.re_size_lattice.has_key( (frame,subframe,l,0) ):
+                    if (frame,subframe,l,0) in self.re_size_lattice:
                         width += round(self.re_size_lattice[(frame,subframe,l,0)][0]/(2048+144.)*self.config['cell_width'])
                 if frame==0 and subframe==0:
                     pass
@@ -1329,14 +1329,14 @@ class TDLTE:
         #print 'in PHICH, print 2:  ',time()-start_time
         for re in REs:
             frame,subframe,l,k = re
-            if (frame,subframe,l) not in REG_indice.keys():
+            if (frame,subframe,l) not in list(REG_indice.keys()):
                 REG_indice[(frame,subframe,l)] = list()
                 REG_indice[(frame,subframe,l)].append( self.RE_to_REG_index(re) )
             else:
                 tmp_REG_index = self.RE_to_REG_index(re)
                 if tmp_REG_index not in REG_indice[(frame,subframe,l)]:
                     REG_indice[(frame,subframe,l)].append( tmp_REG_index )
-        for key in REG_indice.keys():
+        for key in list(REG_indice.keys()):
             for index in REG_indice[key]:
                 self.config['REG_indice'][key].remove(index)
         #print 'PHICH.get_REs ends.  ',time()-start_time
@@ -1510,7 +1510,7 @@ class TDLTE:
             for subframe in range(10):
                 for l in range(2*self.config['N_DL_symb']):
                     for k in range(12*self.config['N_DL_RB']):
-                        if self.re_size_lattice.has_key( (sfn,subframe,l,k) ):
+                        if (sfn,subframe,l,k) in self.re_size_lattice:
                             f.write( str((sfn,subframe,l,k)) + ':' + str(self.re_size_lattice[(sfn,subframe,l,k)]) )
                             f.write('\t')
                 f.write('\n')
@@ -1522,12 +1522,12 @@ class TDLTE:
             for subframe in range(10):
                 for l in range(2*self.config['N_DL_symb']):
                     for k in range(12*self.config['N_DL_RB']):
-                        if self.re_lattice.has_key( (sfn,subframe,l,k) ):
+                        if (sfn,subframe,l,k) in self.re_lattice:
                             f.write( str((sfn,subframe,l,k)) + ':' + str(self.re_lattice[(sfn,subframe,l,k)]) )
                             f.write('\t')
                 f.write('\n')
         f.close()
-        print 'dump_lattice consumed: ', time()-start_time
+        print('dump_lattice consumed: ', time()-start_time)
     #@+node:Michael.20120322092817.2036: *5* get_REG
     def get_REG(self,l,k):
         ks = list()
@@ -1745,7 +1745,8 @@ class TDLTE:
 
     #@+others
     #@+node:Michael.20120322092817.2049: *5* 16QAM
-    def QAM16(self, (b0,b1,b2,b3)):
+    def QAM16(self, xxx_todo_changeme):
+        (b0,b1,b2,b3) = xxx_todo_changeme
         return self.QAM16[b3+2*b2+4*b1+8*b0]
 
     def init_16QAM(self):
@@ -1768,7 +1769,8 @@ class TDLTE:
                                 complex(-3*I, -3*Q),
         )
     #@+node:Michael.20120322092817.2050: *5* 64QAM
-    def QAM64(self, (b0,b1,b2,b3,b4,b5)):
+    def QAM64(self, xxx_todo_changeme1):
+        (b0,b1,b2,b3,b4,b5) = xxx_todo_changeme1
         return self.QAM64[b5+b4*2+b3*4+b2*8+b1*16+b0*32]
 
 
@@ -1856,7 +1858,7 @@ class TDLTE:
     def _init_re_lattice(self):
         color = (self.config['color_brush_RE_r'], self.config['color_brush_RE_g'], self.config['color_brush_RE_b'], self.config['color_brush_RE_alpha'])
         s_color = (self.config['color_brush_S_RE_r'], self.config['color_brush_S_RE_g'], self.config['color_brush_S_RE_b'], self.config['color_brush_S_RE_alpha'])
-        for k in self.re_size_lattice.keys():
+        for k in list(self.re_size_lattice.keys()):
             if self.config['UL_DL_S'][k[1]] == 'S':
                 self.re_lattice[k] = s_color
             else:
@@ -1891,7 +1893,7 @@ class TDLTE:
         self.RE_USAGE_PDCCH = 1>>8
         
         # initialize RE usage lattice
-        for k in self.re_size_lattice.keys():
+        for k in list(self.re_size_lattice.keys()):
             self.re_usage_lattice[k] = self.RE_USAGE_BLANK
 
     def re_set_CSRS_AP(self, ap_num):
@@ -1950,7 +1952,8 @@ class TDLTE:
         N_C = 1600
         return (self.x_1(i+N_C) + self.x_2(c_init,i+N_C)) %2
     #@+node:Michael.20120322092817.2056: *5* QPSK
-    def QPSK(self, (b0,b1)):
+    def QPSK(self, xxx_todo_changeme2):
+        (b0,b1) = xxx_todo_changeme2
         return self.QPSK[2*b0+b1]
 
     def init_QPSK(self):
@@ -2138,7 +2141,7 @@ def main():
     image_drawer = ImageDrawer(config, tdlte.re_lattice, tdlte.re_size_lattice)
 
 main()
-print "Whole program ended after ", time()-start_time, " sec."
+print("Whole program ended after ", time()-start_time, " sec.")
 os.system('%s.png'%project_name)
 #@-others
 #@-leo
