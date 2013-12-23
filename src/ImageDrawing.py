@@ -4,11 +4,12 @@ Created on 23 dec 2013
 @author: Michael Duo Ling
 '''
 from PIL import Image, ImageDraw
-from Config import project_name, project_owner, project_weblink
+import Config
+from Enums import SF_TYPE
 
 class Point:
     def __init__(self,x,y):
-        self.x, self.y = x,y
+        self.x, self.y = x, y
     
     def __add__(self, p):
         if type(p) == tuple:
@@ -22,17 +23,26 @@ class Point:
 
     def __str__(self):
         return "%s, %s" % (self.x,self.y)
+    
+    def x(self):
+        return self.x
+    
+    def y(self):
+        return self.y
 
 Size = Point
 
 class ImageDrawer:
-    def __init__(self, config, re_lattice, re_size_lattice):
+    def __init__(self, config, reTypeSubframeList):
+        '''
+        config:    Config module
+        reTypeSubframeList: a list of ReTypeSubframe, which marks the usage of each RE in a list of subframes
+        '''
         self.config = config
-        self.re_lattice = re_lattice
-        self.re_size_lattice = re_size_lattice
+        self.reTypeSubframeList = reTypeSubframeList
         self.initialize_drawer()
         self.RB_count = 0
-        self.draw('%s.png'%project_name)
+        self.draw('%s.png'%Config.project_name)
 
     def _draw_lattice(self):
         # initialize pen colors
@@ -127,13 +137,13 @@ class ImageDrawer:
     def _draw_mark(self):
         font = self.dc.getfont()
         r, g, b, alpha = 0, 0, 0, 128
-        text_width, text_height = font.getsize('A'*len(project_owner))
+        text_width, text_height = font.getsize('A'*len(Config.project_owner))
         pic_width, pic_height = text_width, text_height
         font_color = (0,0,0)
         start_x, start_y = self.config['draw_offset_x']+self.config['image_width']/3*2, self.config['lattice_height']+self.config['draw_offset_y']+(self.config['image_height']-self.config['lattice_height'])/6
-        self.dc.text( (start_x, start_y), project_owner, font_color )
+        self.dc.text( (start_x, start_y), Config.project_owner, font_color )
         start_y += text_height+5
-        self.dc.text( (start_x, start_y), project_weblink, font_color )
+        self.dc.text( (start_x, start_y), Config.project_weblink, font_color )
 
     def _draw_REs(self):
         
@@ -183,19 +193,15 @@ class ImageDrawer:
         self._draw_mark()
         self.image.save(file_name)
 
-    def initialize_drawer(self):
-        width = 0
-        for frame in range(self.config['start_SFN'],self.config['start_SFN']+self.config['frame_num']):
-            for subframe in range(10):
-                for l in range(2*7):
-                    if (frame,subframe,l,0) in self.re_size_lattice:
-                        width += round(self.re_size_lattice[(frame,subframe,l,0)][0]/(2048+144.)*self.config['cell_width'])
-                if frame==0 and subframe==0:
-                    pass
-                else:
-                    width += 1
-        self.config['lattice_width'] = int(width)
-        self.config['lattice_height'] = self.config['cell_height']*self.config['N_DL_RB']*12
+    def initialize_drawer_fdd(self):
+        dl_width = 0
+        for subframe in self.reTypeSubframeList if subframe.subframeType==SF_TYPE.D:
+            
+        for subframe in self.reTypeSubframeList:    # for each subframe in the list
+            width += subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x()
+            width += 1
+        self.lattice_width = width
+        self.lattice_height = Config.DrawingConfig.RE_SIZE.y() * self.config['N_DL_RB']*12
         self.config['image_width'] = self.config['lattice_width'] + 30
         self.config['image_height'] = self.config['lattice_height'] + 70
         

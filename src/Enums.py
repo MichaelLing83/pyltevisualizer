@@ -1254,6 +1254,14 @@ class HIGH_SPEED_FLAG:
     FALSE, TRUE = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
 
+class CFI:
+    '''
+    '''
+    global ENUM_MAX
+    size = 4
+    CFI_1, CFI_2, CFI_3, CFI_4 = range(ENUM_MAX, ENUM_MAX+size)
+    ENUM_MAX += size
+
 class ZERO_CORRELATION_ZONE_CONFIG:
     '''
     '''
