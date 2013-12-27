@@ -4,54 +4,32 @@ Created on 23 dec 2013
 @author: Michael Duo Ling
 '''
 from PIL import Image, ImageDraw
+from ToolClasses import Point, Size
 import Config
 from Enums import SF_TYPE
+from ToolClasses import ReTypeSubframe
 
-class Point:
-    def __init__(self,x,y):
-        self.x, self.y = x, y
-    
-    def __add__(self, p):
-        if type(p) == tuple:
-            x,y = p
-            return Point(self.x+x,self.y+y)
-        else:
-            return Point(self.x+p.x,self.y+p.y)
-    
-    def __sub__(self, p):
-        return Point(self.x-p.x,self.y-p.y)
 
-    def __str__(self):
-        return "%s, %s" % (self.x,self.y)
-    
-    def x(self):
-        return self.x
-    
-    def y(self):
-        return self.y
-
-Size = Point
 
 class ImageDrawer:
-    def __init__(self, config, reTypeSubframeList):
+    def __init__(self, reTypeSubframeList):
         '''
         config:    Config module
         reTypeSubframeList: a list of ReTypeSubframe, which marks the usage of each RE in a list of subframes
         '''
-        self.config = config
         self.reTypeSubframeList = reTypeSubframeList
-        self.initialize_drawer()
+        self.initialize_drawer_fdd()
         self.RB_count = 0
         self.draw('%s.png'%Config.project_name)
 
     def _draw_lattice(self):
         # initialize pen colors
-        penclr_D = ( self.config['color_line_DL_RE_r'], self.config['color_line_DL_RE_g'], self.config['color_line_DL_RE_b'], self.config['color_line_DL_RE_alpha'] )
-        penclr_U = ( self.config['color_line_UL_RE_r'], self.config['color_line_UL_RE_g'], self.config['color_line_UL_RE_b'], self.config['color_line_UL_RE_alpha'] )
-        penclr_S = ( self.config['color_line_S_RE_r'], self.config['color_line_S_RE_g'], self.config['color_line_S_RE_b'], self.config['color_line_S_RE_alpha'] )
+        penclr_D = Config.DrawingConfig.color_line_DL_RE
+        penclr_U = Config.DrawingConfig.color_line_UL_RE
+        penclr_S = Config.DrawingConfig.color_line_S_RE
         
         # draw all vertical lines
-        start_pos = Point( 0,0 ) + self.config['draw_offset']
+        start_pos = Point( 0,0 ) + Config.DrawingConfig.draw_offset
         total_width = 0
         total_height = self.config['cell_height']*self.config['N_DL_RB']*12
         for frame in range(self.config['start_SFN'],self.config['start_SFN']+self.config['frame_num']):
@@ -187,23 +165,33 @@ class ImageDrawer:
             x += length
 
     def draw(self, file_name):
-        self._draw_lattice()
-        self._draw_REs()
-        self._draw_legend()
-        self._draw_mark()
+        #self._draw_lattice()
+        #self._draw_REs()
+        #self._draw_legend()
+        #self._draw_mark()
         self.image.save(file_name)
 
     def initialize_drawer_fdd(self):
+        '''
+        First we want to calculate how much width we need to plot the whole thing. However, it's a little different for FDD.
+        We just make it work here for now, and to make it better later.
+        '''
         dl_width = 0
-        for subframe in self.reTypeSubframeList if subframe.subframeType==SF_TYPE.D:
-            
-        for subframe in self.reTypeSubframeList:    # for each subframe in the list
-            width += subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x()
-            width += 1
-        self.lattice_width = width
-        self.lattice_height = Config.DrawingConfig.RE_SIZE.y() * self.config['N_DL_RB']*12
-        self.config['image_width'] = self.config['lattice_width'] + 30
-        self.config['image_height'] = self.config['lattice_height'] + 70
+        # TODO: beautify the plot
+        for subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.D]:
+            dl_width += subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x
+        ul_width = 0
+        for subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.U]:
+            dl_width += subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x
+        self.lattice_size = Size(max(dl_width, ul_width),
+                                 Config.DrawingConfig.RE_SIZE.y * (Config.GlobalConfig.N_DL_RB + Config.GlobalConfig.N_UL_RB) * Config.GlobalConfig.N_RB_sc + Config.DrawingConfig.gap_ul_dl_for_fdd) 
+        self.image_size = self.lattice_size + Config.DrawingConfig.image_margin
         
-        self.image = Image.new("RGB",(self.config['image_width'],self.config['image_height']),(255,255,255))
+        self.image = Image.new("RGB", self.image_size.toTuple(), (255,255,255))
         self.dc = ImageDraw.Draw(self.image)
+
+if __name__ == '__main__':
+    reTypeSubframeList = list()
+    for s in Config.subframeConfigs:
+        reTypeSubframeList.append(ReTypeSubframe(Config.GlobalConfig.DownlinkBandwidth, Config.GlobalConfig.DlCyclicPrefixLength, Config.GlobalConfig.DeltaF, SF_TYPE.D, s.longSfn, s.numberOfPdcchSymbols()))
+    imageDrawer = ImageDrawer(reTypeSubframeList)
