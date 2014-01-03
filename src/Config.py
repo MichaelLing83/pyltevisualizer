@@ -4,6 +4,7 @@ Created on 23 dec 2013
 @author: Michael Duo Ling
 '''
 from Enums import *
+import PhyChannels
 from ToolClasses import Point, Size
 from SubframeConfig import SubframeConfig
 
@@ -30,7 +31,7 @@ GlobalConfig = __GlobalConfig__()
 
 ############ Start of per Subframe LTE Configuration #############
 subframeConfigs = list()
-for longSfn in range(100, 102):
+for longSfn in range(100, 101):
     subframeConfigs.append(SubframeConfig(longSfn, SF_TYPE.D, GlobalConfig.CFI, GlobalConfig))
 ############ End of per Subframe LTE Configuration #############
 
@@ -85,6 +86,7 @@ GlobalConfig.N_ID_1 = GlobalConfig.CellId // 3
 GlobalConfig.N_ID_2 = GlobalConfig.CellId % 3
 GlobalConfig.N_RB_sc = BW.calc__N_RB_sc(GlobalConfig.DlCyclicPrefixLength, GlobalConfig.DeltaF)
 GlobalConfig.N_DL_RB = BW.toRbNumber(GlobalConfig.DownlinkBandwidth)
+GlobalConfig.N_DL_symb = PhyChannels.Downlink.calc_N_DL_symb(GlobalConfig.DlCyclicPrefixLength, GlobalConfig.DeltaF)
 GlobalConfig.N_UL_RB = BW.toRbNumber(GlobalConfig.UplinkBandwidth)
 
 project_version = '2.0.0'

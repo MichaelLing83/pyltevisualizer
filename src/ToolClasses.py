@@ -6,12 +6,10 @@ Created on 27 dec 2013
 
 from Enums import RE_TYPE, BW, CP_TYPE, DELTA_F
 
-class Holder:
-    pass
-
 class Point:
-    def __init__(self,x,y):
-        self.x, self.y = x, y
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
     
     def __add__(self, p):
         if type(p) == tuple:
@@ -28,12 +26,6 @@ class Point:
     
     def toTuple(self):
         return (self.x, self.y)
-    
-    def x(self):
-        return self.x
-    
-    def y(self):
-        return self.y
 
 Size = Point
 

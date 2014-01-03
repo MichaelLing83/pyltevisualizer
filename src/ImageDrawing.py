@@ -6,73 +6,32 @@ Created on 23 dec 2013
 from PIL import Image, ImageDraw
 from ToolClasses import Point, Size
 import Config
-from Enums import SF_TYPE
+from Enums import SF_TYPE, DUPLEX_MODE
 from ToolClasses import ReTypeSubframe
 
-
-
 class ImageDrawer:
-    def __init__(self, reTypeSubframeList):
+    def __init__(self, duplexMode, reTypeSubframeList):
         '''
         config:    Config module
         reTypeSubframeList: a list of ReTypeSubframe, which marks the usage of each RE in a list of subframes
         '''
         self.reTypeSubframeList = reTypeSubframeList
-        self.initialize_drawer_fdd()
         self.RB_count = 0
-        self.draw('%s.png'%Config.project_name)
-
-    def _draw_lattice(self):
-        # initialize pen colors
-        penclr_D = Config.DrawingConfig.color_line_DL_RE
-        penclr_U = Config.DrawingConfig.color_line_UL_RE
-        penclr_S = Config.DrawingConfig.color_line_S_RE
-        
-        # draw all vertical lines
-        start_pos = Point( 0,0 ) + Config.DrawingConfig.draw_offset
-        total_width = 0
-        total_height = self.config['cell_height']*self.config['N_DL_RB']*12
-        for frame in range(self.config['start_SFN'],self.config['start_SFN']+self.config['frame_num']):
-            for subframe in range(10):
-                if self.config['UL_DL_S'][subframe] == 'D':
-                    penclr = penclr_D
-                elif self.config['UL_DL_S'][subframe] == 'U':
-                    penclr = penclr_U
-                else:
-                    penclr = penclr_S
-                if frame==self.config['start_SFN'] and subframe==0:  # this is not the starting subframe of the first frame
-                    pass
-                else:
-                    start_pos += Point(1,0)
-                    total_width += 1
-                subframe_start_pos = start_pos
-                subframe_width = 0
-                line = (start_pos.x,start_pos.y, start_pos.x,start_pos.y+total_height)
-                self.dc.line( line, penclr )
-                # draw vertical lines
-                for l in range(14):
-                    if (frame,subframe,l,0) in self.re_size_lattice:
-                        current_symbol_length = round(self.re_size_lattice[(frame,subframe,l,0)][0]/(2048+144.)*self.config['cell_width'])
-                        total_width += current_symbol_length
-                        subframe_width += current_symbol_length
-                        line = (start_pos.x+current_symbol_length,start_pos.y, start_pos.x+current_symbol_length,start_pos.y+total_height)
-                        start_pos += Point(current_symbol_length,0)
-                        self.dc.line( line, penclr )
-                
-                # draw horizontal lines for this subframe
-                if self.config['UL_DL_S'][subframe] in 'DU':
-                    for k in range(self.config['N_DL_RB']*12+1):
-                        line = (subframe_start_pos.x,subframe_start_pos.y, subframe_start_pos.x+subframe_width,subframe_start_pos.y)
-                        subframe_start_pos += Point(0,self.config['cell_height'])
-                        self.dc.line( line, penclr )
-                else:   # S
-                    for k in range(self.config['N_DL_RB']*12+1):
-                        line = (subframe_start_pos.x,subframe_start_pos.y, subframe_start_pos.x+self.re_size_lattice.DwPTS_width,subframe_start_pos.y)
-                        self.dc.line( line, penclr )
-                        line = (subframe_start_pos.x+self.re_size_lattice.DwPTS_width+self.re_size_lattice.GAP_width,subframe_start_pos.y, subframe_start_pos.x+subframe_width,subframe_start_pos.y)
-                        self.dc.line( line, penclr )
-                        subframe_start_pos += Point(0,self.config['cell_height'])
-            start_pos += Point(self.config['frame_interval'], 0)
+        if (duplexMode == DUPLEX_MODE.FDD):
+            dl_start_pos = Config.DrawingConfig.draw_offset
+            ul_start_pos = Point(0, 0)
+            self.dl_subframe_index, self.ul_subframe_index = 0, 0
+            self.initialize_fdd_drawer()
+            for dl_subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.D]:
+                dl_start_pos = self.draw_fdd_subframe(dl_start_pos, self.dl_subframe_size, dl_subframe)
+            for ul_subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.U]:
+                ul_start_pos = self.draw_fdd_subframe(ul_start_pos, self.ul_subframe_size, ul_subframe)
+            self.draw('%s.png'%Config.project_name)
+        else:
+            # TDD
+            self.subframe_index = 0
+            raise Exception("TDD drawing is not supported yet!")
+            self.draw('%s.png'%Config.project_name)
 
     def _draw_legend(self):
         
@@ -170,21 +129,51 @@ class ImageDrawer:
         #self._draw_legend()
         #self._draw_mark()
         self.image.save(file_name)
+    
+    def draw_fdd_subframe(self, start_pos, size, subframe):
+        '''
+        Draw one FDD subframe.
+        '''
+        # initialize pen colors
+        penclr = Config.DrawingConfig.color_line_DL_RE
+        # draw all vertical lines
+        line = (start_pos.x, start_pos.y, start_pos.x, start_pos.y+size.y)
+        self.dc.line(line, penclr)
+        for l in range(subframe.columnDimension):
+            line = (start_pos.x+Config.DrawingConfig.RE_SIZE.x*(l+1), start_pos.y,
+                    start_pos.x+Config.DrawingConfig.RE_SIZE.x*(l+1), start_pos.y+size.y)
+            self.dc.line(line, penclr)
+        # draw all horizontal lines
+        line = (start_pos.x, start_pos.y, start_pos.x+size.x, start_pos.y)
+        self.dc.line(line, penclr)
+        for k in range(subframe.rowDimension):
+            line = (start_pos.x, start_pos.y+Config.DrawingConfig.RE_SIZE.y*(k+1),
+                    start_pos.x+size.x, start_pos.y+Config.DrawingConfig.RE_SIZE.y*(k+1))
+            self.dc.line(line, penclr)
+        return start_pos + Size(size.x, 0)
 
-    def initialize_drawer_fdd(self):
+    def initialize_fdd_drawer(self):
         '''
         First we want to calculate how much width we need to plot the whole thing. However, it's a little different for FDD.
         We just make it work here for now, and to make it better later.
         '''
-        dl_width = 0
-        # TODO: beautify the plot
+        # calculate DL/UL subframe size
+        self.dl_subframe_size = Size(0, 0)
         for subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.D]:
-            dl_width += subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x
-        ul_width = 0
+            self.dl_subframe_size = Size(subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x,
+                                         Config.DrawingConfig.RE_SIZE.y * Config.GlobalConfig.N_DL_RB * Config.GlobalConfig.N_RB_sc)
+            break
+        self.ul_subframe_size = Size(0, 0)
         for subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.U]:
-            dl_width += subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x
-        self.lattice_size = Size(max(dl_width, ul_width),
-                                 Config.DrawingConfig.RE_SIZE.y * (Config.GlobalConfig.N_DL_RB + Config.GlobalConfig.N_UL_RB) * Config.GlobalConfig.N_RB_sc + Config.DrawingConfig.gap_ul_dl_for_fdd) 
+            self.ul_subframe_size = Size(subframe.columnDimension * Config.DrawingConfig.RE_SIZE.x,
+                                         Config.DrawingConfig.RE_SIZE.y * Config.GlobalConfig.N_UL_RB * Config.GlobalConfig.N_RB_sc)
+            break
+        # calculate total drawing size
+        dl_width = self.dl_subframe_size.x * len([s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.D])
+        ul_width = self.ul_subframe_size.x * len([s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.U])
+        total_height = Config.DrawingConfig.RE_SIZE.y * (Config.GlobalConfig.N_DL_RB + Config.GlobalConfig.N_UL_RB) * Config.GlobalConfig.N_RB_sc + Config.DrawingConfig.gap_ul_dl_for_fdd
+        # TODO: beautify the plot
+        self.lattice_size = Size(max(dl_width, ul_width), total_height)
         self.image_size = self.lattice_size + Config.DrawingConfig.image_margin
         
         self.image = Image.new("RGB", self.image_size.toTuple(), (255,255,255))
@@ -194,4 +183,4 @@ if __name__ == '__main__':
     reTypeSubframeList = list()
     for s in Config.subframeConfigs:
         reTypeSubframeList.append(ReTypeSubframe(Config.GlobalConfig.DownlinkBandwidth, Config.GlobalConfig.DlCyclicPrefixLength, Config.GlobalConfig.DeltaF, SF_TYPE.D, s.longSfn, s.numberOfPdcchSymbols()))
-    imageDrawer = ImageDrawer(reTypeSubframeList)
+    imageDrawer = ImageDrawer(Config.GlobalConfig.DuplexMode, reTypeSubframeList)
