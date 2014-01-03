@@ -23,9 +23,9 @@ class ImageDrawer:
             self.dl_subframe_index, self.ul_subframe_index = 0, 0
             self.initialize_fdd_drawer()
             for dl_subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.D]:
-                dl_start_pos = self.draw_fdd_subframe(dl_start_pos, self.dl_subframe_size, dl_subframe)
+                dl_start_pos = self.draw_fdd_subframe(dl_start_pos, self.dl_subframe_size, dl_subframe) + Config.DrawingConfig.subframe_gap
             for ul_subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.U]:
-                ul_start_pos = self.draw_fdd_subframe(ul_start_pos, self.ul_subframe_size, ul_subframe)
+                ul_start_pos = self.draw_fdd_subframe(ul_start_pos, self.ul_subframe_size, ul_subframe) + Config.DrawingConfig.subframe_gap
             self.draw('%s.png'%Config.project_name)
         else:
             # TDD

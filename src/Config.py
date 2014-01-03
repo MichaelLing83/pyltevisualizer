@@ -40,6 +40,7 @@ class DrawingConfig:
     RE_SIZE = Size(7, 7)    # size for one RE (resource element), in pixel
     frame_interval  =  10    #blank width between two frames, in pixel
     draw_offset = Point(15, 15)   # offset for the whole lattice
+    subframe_gap = Size(2, 0)        # a small gap between adjacent subframes
     gap_ul_dl_for_fdd = 20
     image_margin = Size( 30, 70)
     # all color parameters are listed below. each color setting is represented by (r,g,b,a), i.e. (red, green, blue, alpha)
