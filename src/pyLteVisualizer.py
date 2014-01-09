@@ -10,8 +10,13 @@ Terminology:
 
 import Config
 from Enums import *
+from ImageDrawing import ImageDrawer
+from ToolClasses import ReTypeSubframe
 
-
+reTypeSubframeList = list()
+for s in Config.subframeConfigs:
+    reTypeSubframeList.append(ReTypeSubframe(Config.GlobalConfig.DownlinkBandwidth, Config.GlobalConfig.DlCyclicPrefixLength, Config.GlobalConfig.DeltaF, s.subframeType, s.longSfn, s.numberOfPdcchSymbols()))
+imageDrawer = ImageDrawer(Config.GlobalConfig.DuplexMode, reTypeSubframeList)
     
 
 if __name__ == '__main__':
