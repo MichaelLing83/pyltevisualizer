@@ -23,5 +23,7 @@ class SubframeConfig:
                 return self.cfi
             else:
                 return self.cfi+1
+        elif self.subframeType==SF_TYPE.U:
+            return 0
         raise Exception("Invalid parameters: subframeType={0}, CFI={1}".format(self.subframeType, self.cfi))
         

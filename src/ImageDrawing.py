@@ -19,9 +19,10 @@ class ImageDrawer:
         self.RB_count = 0
         if (duplexMode == DUPLEX_MODE.FDD):
             dl_start_pos = Config.DrawingConfig.draw_offset
-            ul_start_pos = Point(0, 0)
+            ul_start_pos = Config.DrawingConfig.draw_offset
             self.dl_subframe_index, self.ul_subframe_index = 0, 0
             self.initialize_fdd_drawer()
+            ul_start_pos += Point(0, self.dl_subframe_size.y+Config.DrawingConfig.gap_ul_dl_for_fdd)
             for dl_subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.D]:
                 dl_start_pos = self.draw_fdd_subframe(dl_start_pos, self.dl_subframe_size, dl_subframe) + Config.DrawingConfig.subframe_gap
             for ul_subframe in [s for s in self.reTypeSubframeList if s.sfType==SF_TYPE.U]:
@@ -182,5 +183,5 @@ class ImageDrawer:
 if __name__ == '__main__':
     reTypeSubframeList = list()
     for s in Config.subframeConfigs:
-        reTypeSubframeList.append(ReTypeSubframe(Config.GlobalConfig.DownlinkBandwidth, Config.GlobalConfig.DlCyclicPrefixLength, Config.GlobalConfig.DeltaF, SF_TYPE.D, s.longSfn, s.numberOfPdcchSymbols()))
+        reTypeSubframeList.append(ReTypeSubframe(Config.GlobalConfig.DownlinkBandwidth, Config.GlobalConfig.DlCyclicPrefixLength, Config.GlobalConfig.DeltaF, s.subframeType, s.longSfn, s.numberOfPdcchSymbols()))
     imageDrawer = ImageDrawer(Config.GlobalConfig.DuplexMode, reTypeSubframeList)

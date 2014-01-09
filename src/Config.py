@@ -33,6 +33,7 @@ GlobalConfig = __GlobalConfig__()
 subframeConfigs = list()
 for longSfn in range(100, 101):
     subframeConfigs.append(SubframeConfig(longSfn, SF_TYPE.D, GlobalConfig.CFI, GlobalConfig))
+    subframeConfigs.append(SubframeConfig(longSfn, SF_TYPE.U, GlobalConfig.CFI, GlobalConfig))
 ############ End of per Subframe LTE Configuration #############
 
 ############ Start of Drawing Configuration #############
