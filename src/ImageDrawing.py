@@ -12,7 +12,7 @@ from ToolClasses import ReTypeSubframe
 class ImageDrawer:
     def __init__(self, duplexMode, reTypeSubframeList):
         '''
-        config:    Config module
+        duplexMode:    FDD or TDD
         reTypeSubframeList: a list of ReTypeSubframe, which marks the usage of each RE in a list of subframes
         '''
         self.reTypeSubframeList = reTypeSubframeList
