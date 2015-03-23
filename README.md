@@ -6,9 +6,10 @@ Now continues on GitHub. After years, there are so many changes in the world of 
 
 ## Requirements
 * Output a picture to show Uu interface RE usage, in which:
-  * it is able to distinguish different antenna ports (by color);
-  * it is able to distinguish different physical channels (by color);
-  * colors are configurable;
+ * it is able to distinguish different antenna ports (by color);
+ * it is able to distinguish different physical channels (by color);
+ * colors are configurable;
+* Support [3GPP 36.211 Release 12] (http://www.etsi.org/deliver/etsi_ts/136200_136299/136211/12.04.00_60/ts_136211v120400p.pdf);
 * Support FDD and TDD;
 * OK performance;
 * Run on Linux, Windows, MacOS
