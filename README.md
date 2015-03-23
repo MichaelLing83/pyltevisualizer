@@ -1,0 +1,19 @@
+# pyltevisualizer
+Automatically exported from code.google.com/p/pyltevisualizer
+
+Now continues on GitHub. After years, there are so many changes in the world of LTE (or LTE-A, -B, ...). It is time to restart this project!
+
+
+## Requirements
+* Output a picture to show Uu interface RE usage, in which:
+  * it is able to distinguish different antenna ports (by color);
+  * it is able to distinguish different physical channels (by color);
+  * colors are configurable;
+* Support FDD and TDD;
+* OK performance;
+* Run on Linux, Windows, MacOS
+* Easy to download and run
+
+## Design Decisions
+* Implement in Python 3;
+* Test framework is nose;
