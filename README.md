@@ -19,5 +19,11 @@ Now continues on GitHub. After years, there are so many changes in the world of 
 * Implement in Python 3;
 * Test framework is nose;
 * Package/Module split ([Issue 6] (https://github.com/MichaelLing83/pyltevisualizer/issues/6)):
-  * Follow [this document] (https://docs.python.org/3/tutorial/modules.html) to construct folder/file structures;
-  * Split according to 36 serial specification chapters and sections;
+ * Follow [this document] (https://docs.python.org/3/tutorial/modules.html) to construct folder/file structures;
+ * Split according to 36 serial specification chapters and sections;
+* Naming rules:
+ * Variables ([Issue 11] (https://github.com/MichaelLing83/pyltevisualizer/issues/11)):
+   * Follow the name in spec as much as possible;
+    * If the symbol in spec has upper/lower-fix, then put upper-fix first, and split them with a '_';
+    * Ignore characters not in [a-zA-Z_];
+    * E.g.: N_cell_ID, N__CPl, n_3p_PUCCH, s_p_l;
