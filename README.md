@@ -18,3 +18,6 @@ Now continues on GitHub. After years, there are so many changes in the world of 
 ## Design Decisions
 * Implement in Python 3;
 * Test framework is nose;
+* Package/Module split [Issue 6] (https://github.com/MichaelLing83/pyltevisualizer/issues/6):
+  * Follow [this document] (https://docs.python.org/3/tutorial/modules.html) to construct folder/file structures;
+  * Split according to 36 serial specification chapters and sections;
