@@ -21,6 +21,7 @@ Now continues on GitHub. After years, there are so many changes in the world of 
 * Package/Module split ([Issue 6] (https://github.com/MichaelLing83/pyltevisualizer/issues/6)):
  * Follow [this document] (https://docs.python.org/3/tutorial/modules.html) to construct folder/file structures;
  * Split according to 36 serial specification chapters and sections;
+ * E.g.: ts36_211.ch7.s5 for TS36.211, Chapter 7, Section 5;
 * Naming rules:
  * Variables ([Issue 11] (https://github.com/MichaelLing83/pyltevisualizer/issues/11)):
    * Follow the name in spec as much as possible;
