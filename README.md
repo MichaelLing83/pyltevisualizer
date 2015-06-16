@@ -28,3 +28,11 @@ Now continues on GitHub. After years, there are so many changes in the world of 
     * If the symbol in spec has upper/lower-fix, then put upper-fix first, and split them with a '_';
     * Ignore characters not in [a-zA-Z_];
     * E.g.: N_cell_ID, N__CPl, n_3p_PUCCH, s_p_l;
+
+## HowTo
+* Setup environment
+ # go to root folder that contains setenv.sh
+ # source setenv.sh
+* Run test
+ # go to any folder
+ # execute "test" to run all tests recursively from current folder
