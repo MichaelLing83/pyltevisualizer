@@ -31,8 +31,8 @@ Now continues on GitHub. After years, there are so many changes in the world of 
 
 ## HowTo
 * Setup environment
- # go to root folder that contains setenv.sh
- # source setenv.sh
+ 1. go to root folder that contains `setenv.sh`
+ 2. `source setenv.sh`
 * Run test
- # go to any folder
- # execute "test" to run all tests recursively from current folder
+ 1. go to any folder
+ 2. execute `test` to run all tests recursively from current folder
