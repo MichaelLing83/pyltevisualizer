@@ -84,6 +84,8 @@ class Matrix(_Array):
         self.debug = False
     def _sizes(self):
         return (self._size_x(), self._size_y())
+    def shape(self):
+        return self._sizes()
     def _size_x(self):
         return self.__end_x - self.__start_x
     def _size_y(self):
