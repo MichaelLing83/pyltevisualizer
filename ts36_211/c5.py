@@ -1,5 +1,19 @@
 from .core.Enums import CP_TYPE
 
+# 5.2.3 Resource blocks
+
+#   Table 5.2.3-1 Resource block parameters
+def N_RB_sc():
+    # for UL it is always 12 subcarriers per RB, since it is always 15 kHz
+    return 12
+
+def N_UL_symb(ul_cp):
+    assert ul_cp in CP_TYPE.all()
+    if ul_cp == CP_TYPE.NORMAL:
+        return 7
+    else:
+        return 6
+
 # 5.6 SC-FDMA baseband signal generation
 
 #   symbol length in Ts without CP

@@ -10,7 +10,7 @@ def calc_N_RB_sc(cyclic_prefix, delta_f):
         else:
             return 24
 
-def calc_N_DL_symb(cyclic_prefix, delta_f):
+def N_DL_symb(cyclic_prefix, delta_f):
     if cyclic_prefix == CP_TYPE.NORMAL:
         assert delta_f == DELTA_F.KHZ_15, "Illegal configuration!"
         return 7

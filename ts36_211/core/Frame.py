@@ -1,7 +1,6 @@
 from .Matrix import Matrix
-from .Enums import CP_TYPE, DUPLEX_MODE, BW, DELTA_F, SUBFRAME_ASSIGNMENT
-from ..c6 import calc_N_DL_symb
-from ..c4 import T_f, T_s
+from .Enums import CP_TYPE, DUPLEX_MODE, BW, DELTA_F
+from ..c6 import N_DL_symb
 from .Re import Re
 
 class L1Config:
@@ -20,7 +19,7 @@ class Frame(Matrix):
         if self.l1_config.duplexMode == DUPLEX_MODE.TDD:
             assert self.l1_config.dl_bandwidth == self.l1_config.ul_bandwidth, "TDD must have the same bandwidth for DL and UL!"
             __size_y = BW.toReNumber(self.l1_config.dl_bandwidth, self.l1_config.dl_cyclicPrefixLength, self.l1_config.delta_f)
-            __size_x = calc_N_DL_symb(self.l1_config.dl_cyclicPrefixLength, self.l1_config.delta_f) * 2
+            __size_x = N_DL_symb(self.l1_config.dl_cyclicPrefixLength, self.l1_config.delta_f) * 2
         else:
             assert False, "FDD is not supported yet!"
         super().__init__(__size_x, __size_y, Re)

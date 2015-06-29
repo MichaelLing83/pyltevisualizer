@@ -1,4 +1,6 @@
 from .core.Enums import SF_TYPE, SUBFRAME_ASSIGNMENT, SPECIAL_SUBFRAME_PATTERNS, CP_TYPE
+from .c5 import cyclic_prefix_in_Ts, N
+from .c6 import N_DL_symb
 
 T_f = 10 / 1000         # one frame in seconds
 T_s = T_f / 307200      # basic time unit in seconds
@@ -17,6 +19,16 @@ def DwPTS(ssp, dl_cp):
     else:
         assert SPECIAL_SUBFRAME_PATTERNS.SSP0 <= ssp <= SPECIAL_SUBFRAME_PATTERNS.SSP6
         return (7680, 20480, 23040, 25600, 7680, 20480, 23040)[ssp - SPECIAL_SUBFRAME_PATTERNS.SSP0]
+
+def symbol_nr_DwPTS(ssp, dl_cp, delta_f):
+    len_ts = DwPTS(ssp, dl_cp)
+    l, count = 0, 0
+    while len_ts > 0:
+        len_ts -= cyclic_prefix_in_Ts(dl_cp, l) + N()
+        l = (l + 1) % N_DL_symb(dl_cp, delta_f)
+        count += 1
+    assert len_ts == 0
+    return count
 
 def UpPTS(ssp, dl_cp, ul_cp):
     assert ssp in SPECIAL_SUBFRAME_PATTERNS.all()
