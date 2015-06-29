@@ -11,8 +11,8 @@ class RE_TYPE:
     Resource Element Type: used to mark each RE which PHY signal/channel is using this one.
     '''
     global ENUM_MAX
-    size = 9
-    AVAILABLE, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7 = range(ENUM_MAX, ENUM_MAX+size)
+    size = 14
+    AVAILABLE, DL_AVAILABLE, UL_AVAILABLE, DWPTS, GP, UPPTS, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7 = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
     @staticmethod
     def all_types():
@@ -35,6 +35,9 @@ class CP_TYPE:
     size = 2
     NORMAL, EXTENDED = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
+    @staticmethod
+    def all():
+        return range(CP_TYPE.NORMAL, CP_TYPE.NORMAL + CP_TYPE.size)
 
 class DELTA_F:
     '''
@@ -44,6 +47,9 @@ class DELTA_F:
     size = 2
     KHZ_7_5, KHZ_15 = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
+    @staticmethod
+    def all():
+        return range(DELTA_F.KHZ_7_5, DELTA_F.KHZ_7_5 + DELTA_F.size)
 
 class BW:
     '''
@@ -93,6 +99,9 @@ class SUBFRAME_ASSIGNMENT:
     size = 7
     SA0, SA1, SA2, SA3, SA4, SA5, SA6 = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
+    @staticmethod
+    def all():
+        return range(SUBFRAME_ASSIGNMENT.SA0, SUBFRAME_ASSIGNMENT.SA0 + SUBFRAME_ASSIGNMENT.size)
 
 class ANTENNA_PORTS_COUNT:
     '''
@@ -125,6 +134,9 @@ class SPECIAL_SUBFRAME_PATTERNS:
     size = 9
     SSP0, SSP1, SSP2, SSP3, SSP4, SSP5, SSP6, SSP7, SSP8 = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
+    @staticmethod
+    def all():
+        return range(SPECIAL_SUBFRAME_PATTERNS.SSP0, SPECIAL_SUBFRAME_PATTERNS.SSP0 + SPECIAL_SUBFRAME_PATTERNS.size)
 
 class TRANSMISSION_MODE:
     '''
