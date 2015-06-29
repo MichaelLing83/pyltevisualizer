@@ -14,6 +14,9 @@ class RE_TYPE:
     size = 9
     AVAILABLE, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7 = range(ENUM_MAX, ENUM_MAX+size)
     ENUM_MAX += size
+    @staticmethod
+    def all_types():
+        return range(RE_TYPE.AVAILABLE, RE_TYPE.AVAILABLE+RE_TYPE.size)
 
 class SF_TYPE:
     '''

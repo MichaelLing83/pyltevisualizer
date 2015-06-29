@@ -1,6 +1,7 @@
 from .Matrix import Matrix
 from .Enums import CP_TYPE, DUPLEX_MODE, BW, DELTA_F
 from ..c6 import calc_N_DL_symb
+from .Re import Re
 
 class L1Config:
     def __init__(self):
@@ -21,4 +22,4 @@ class Frame(Matrix):
             __size_x = calc_N_DL_symb(self.l1_config.dl_cyclicPrefixLength, self.l1_config.delta_f)
         else:
             assert False, "FDD is not supported yet!"
-        super().__init__(__size_x, __size_y, int)
+        super().__init__(__size_x, __size_y, Re)

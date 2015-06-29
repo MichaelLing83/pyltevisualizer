@@ -2,7 +2,7 @@ import unittest
 from ..Frame import Frame, L1Config
 from ..Plotter import Plotter
 
-class TestMatrix(unittest.TestCase):
+class TestFrame(unittest.TestCase):
     def test_create(self):
         frame = Frame(L1Config())
         plotter = Plotter(frame)
