@@ -1,6 +1,6 @@
 import unittest
-from ..Frame import Frame
+from ..Frame import Frame, L1Config
 
 class TestMatrix(unittest.TestCase):
     def test_create(self):
-        frame = Frame()
+        frame = Frame(L1Config())
