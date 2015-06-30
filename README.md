@@ -36,3 +36,7 @@ Now continues on GitHub. After years, there are so many changes in the world of 
 * Run test
  1. go to any folder
  2. execute `test` to run all tests recursively from current folder
+
+## Known Limitations
+* MBSFN is not supported;
+* 7.5 kHz subcarrier is not supported;
