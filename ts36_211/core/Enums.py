@@ -34,89 +34,41 @@ class ENUM:
 
 ENUM_MAX = 0
 ENUM_STRS = list()
-"""
-class RE_TYPE:
-    '''
-    Resource Element Type: used to mark each RE which PHY signal/channel is using this one.
-    '''
-    global ENUM_MAX, ENUM_STRS
-    size = 14
-    AVAILABLE, DL_AVAILABLE, UL_AVAILABLE, DWPTS, GP, UPPTS, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7 = range(ENUM_MAX, ENUM_MAX+size)
-    for s in "AVAILABLE, DL_AVAILABLE, UL_AVAILABLE, DWPTS, GP, UPPTS, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7".split(','):
-        ENUM_STRS.append(s.strip())
-    ENUM_MAX += size
-    @staticmethod
-    def all():
-        return range(RE_TYPE.AVAILABLE, RE_TYPE.AVAILABLE+RE_TYPE.size)"""
 
 RE_TYPE = ENUM( 'RE_TYPE',
                 ("AVAILABLE", "DL_AVAILABLE", "UL_AVAILABLE", "DWPTS", "GP",
                 "UPPTS", "CSRS_PORT0", "CSRS_PORT1", "CSRS_PORT2", "CSRS_PORT3",
                 "CSRS_PORT4", "CSRS_PORT5", "CSRS_PORT6", "CSRS_PORT7"))
 
-class SF_TYPE:
-    '''
-    enum class for subframe type
-    '''
-    global ENUM_MAX
-    size = 3
-    D, U, S = range(ENUM_MAX, ENUM_MAX+size)
-    ENUM_MAX += size
+SF_TYPE = ENUM('SF_TYPE', ('D', 'U', 'S'))
 
-class CP_TYPE:
-    '''
-    Cyclic Prefix Type
-    '''
-    global ENUM_MAX
-    size = 2
-    NORMAL, EXTENDED = range(ENUM_MAX, ENUM_MAX+size)
-    ENUM_MAX += size
-    @staticmethod
-    def all():
-        return range(CP_TYPE.NORMAL, CP_TYPE.NORMAL + CP_TYPE.size)
+CP_TYPE = ENUM('CP_TYPE', ("NORMAL", "EXTENDED"))
 
-class DELTA_F:
-    '''
-    delta_f, 15 kHz or 7.5 kHz.
-    '''
-    global ENUM_MAX
-    size = 2
-    KHZ_7_5, KHZ_15 = range(ENUM_MAX, ENUM_MAX+size)
-    ENUM_MAX += size
-    @staticmethod
-    def all():
-        return range(DELTA_F.KHZ_7_5, DELTA_F.KHZ_7_5 + DELTA_F.size)
+DELTA_F = ENUM('DELTA_F', ("KHZ_7_5", "KHZ_15"))
 
-class BW:
+BW = ENUM('BW', ('N6', 'N15', 'N25', 'N50', 'N75', 'N100'))
+def __BW_toRbNumber(bw):
     '''
-    Up-link or down-link BandWidth
+    Calculate number of Resource Blocks from given band-width.
     '''
-    global ENUM_MAX
-    size = 6
-    N6, N15, N25, N50, N75, N100 = range(ENUM_MAX, ENUM_MAX+size)
-    ENUM_MAX += size
-    @staticmethod
-    def toReNumber(bw, cpType, delta_f):
-        '''
-        Calculate number of sub-carriers for the whole bandwidth.
-        '''
-        return BW.toRbNumber(bw) * BW.calc__N_RB_sc(cpType, delta_f)
-    @staticmethod
-    def toRbNumber(bw):
-        '''
-        Calculate number of Resource Blocks from given band-width.
-        '''
-        return (6,15,25,50,75,100)[bw-BW.N6]
-    @staticmethod
-    def calc__N_RB_sc(cpType, delta_f):
-        '''
-        Calculate number of sub-carriers for one Resource Block, according to table 6.2.3-1 in 36.211.
-        '''
-        if delta_f == DELTA_F.KHZ_15:
-            return 12
-        elif delta_f == DELTA_F.KHZ_7_5:
-            return 24
-        raise Exception("Unknown delta_f={0}".format(delta_f))
+    return (6,15,25,50,75,100)[bw-BW.N6]
+def __BW_calc__N_RB_sc(cpType, delta_f):
+    '''
+    Calculate number of sub-carriers for one Resource Block, according to table 6.2.3-1 in 36.211.
+    '''
+    if delta_f == DELTA_F.KHZ_15:
+        return 12
+    elif delta_f == DELTA_F.KHZ_7_5:
+        return 24
+    raise Exception("Unknown delta_f={0}".format(delta_f))
+def __BW_toReNumber(bw, cpType, delta_f):
+    '''
+    Calculate number of sub-carriers for the whole bandwidth.
+    '''
+    return BW.toRbNumber(bw) * BW.calc__N_RB_sc(cpType, delta_f)
+BW.toRbNumber = __BW_toRbNumber
+BW.calc__N_RB_sc = __BW_calc__N_RB_sc
+BW.toReNumber = __BW_toReNumber
 
 class DUPLEX_MODE:
     '''
