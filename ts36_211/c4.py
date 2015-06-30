@@ -1,6 +1,9 @@
-from .core.Enums import SF_TYPE, SUBFRAME_ASSIGNMENT, SPECIAL_SUBFRAME_PATTERNS, CP_TYPE
-from .c5 import cyclic_prefix_in_Ts, N
+from .core.Enums import SF_TYPE, SUBFRAME_ASSIGNMENT, SPECIAL_SUBFRAME_PATTERNS, CP_TYPE, DELTA_F
+from .c5 import cyclic_prefix_in_Ts as ul_cp_in_Ts
+from .c5 import N as N_ul
 from .c6 import N_DL_symb
+from .c6 import N as N_dl
+from .c6 import cyclic_prefix_in_Ts as dl_cp_in_Ts
 
 T_f = 10 / 1000         # one frame in seconds
 T_s = T_f / 307200      # basic time unit in seconds
@@ -24,7 +27,7 @@ def symbol_nr_DwPTS(ssp, dl_cp, delta_f):
     len_ts = DwPTS(ssp, dl_cp)
     l, count = 0, 0
     while len_ts > 0:
-        len_ts -= cyclic_prefix_in_Ts(dl_cp, l) + N()
+        len_ts -= dl_cp_in_Ts(dl_cp, delta_f, l) + N_dl(delta_f)
         l = (l + 1) % N_DL_symb(dl_cp, delta_f)
         count += 1
     assert len_ts == 0

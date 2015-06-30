@@ -14,10 +14,10 @@ class TestC4(unittest.TestCase):
             for ul_cp in CP_TYPE.all():
                 eq_(int(T_slot/T_s) * 2, DwPTS(ssp, dl_cp) + GP(ssp, dl_cp, ul_cp) + UpPTS(ssp, dl_cp, ul_cp))
     def test_DwPTS(self):
-        dl_cp, delta_f = CP_TYPE.NORMAL, DELTA_F.KHZ_15
+        delta_f = DELTA_F.KHZ_15
+        dl_cp = CP_TYPE.NORMAL
         for ssp in SPECIAL_SUBFRAME_PATTERNS.all():
-            symbol_nr_DwPTS(ssp, dl_cp, delta_f)
+            eq_(symbol_nr_DwPTS(ssp, dl_cp, delta_f), (3,9,10,11,12,3,9,10,11)[ssp-SPECIAL_SUBFRAME_PATTERNS.SSP0])
         dl_cp = CP_TYPE.EXTENDED
-        for delta_f in DELTA_F.all():
-            for ssp in SPECIAL_SUBFRAME_PATTERNS.all()[:7]:
-                symbol_nr_DwPTS(ssp, dl_cp, delta_f)
+        for ssp in SPECIAL_SUBFRAME_PATTERNS.all()[:7]:
+            eq_(symbol_nr_DwPTS(ssp, dl_cp, delta_f), (3,8,9,10,3,8,9)[ssp-SPECIAL_SUBFRAME_PATTERNS.SSP0])
