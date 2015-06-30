@@ -5,17 +5,20 @@ Created on 23 dec 2013
 '''
 
 ENUM_MAX = 0
+ENUM_STRS = list()
 
 class RE_TYPE:
     '''
     Resource Element Type: used to mark each RE which PHY signal/channel is using this one.
     '''
-    global ENUM_MAX
+    global ENUM_MAX, ENUM_STRS
     size = 14
     AVAILABLE, DL_AVAILABLE, UL_AVAILABLE, DWPTS, GP, UPPTS, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7 = range(ENUM_MAX, ENUM_MAX+size)
+    for s in "AVAILABLE, DL_AVAILABLE, UL_AVAILABLE, DWPTS, GP, UPPTS, CSRS_PORT0, CSRS_PORT1, CSRS_PORT2, CSRS_PORT3, CSRS_PORT4, CSRS_PORT5, CSRS_PORT6, CSRS_PORT7".split(','):
+        ENUM_STRS.append(s.strip())
     ENUM_MAX += size
     @staticmethod
-    def all_types():
+    def all():
         return range(RE_TYPE.AVAILABLE, RE_TYPE.AVAILABLE+RE_TYPE.size)
 
 class SF_TYPE:

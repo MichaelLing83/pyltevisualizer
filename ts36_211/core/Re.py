@@ -5,5 +5,5 @@ class Re(int):
         if len(args) == 0:
             return int.__new__(cls, RE_TYPE.AVAILABLE, **kw)
         else:
-            assert args[0] in RE_TYPE.all_types(), "{} is not a valid Re type".format(args[0])
+            assert args[0] in RE_TYPE.all(), "{} is not a valid Re type".format(args[0])
             return int.__new__(cls, *args, **kw)

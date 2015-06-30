@@ -7,6 +7,6 @@ class TestRe(unittest.TestCase):
         re = Re()
         assert re == RE_TYPE.AVAILABLE, "default value should be RE_TYPE.AVAILABLE"
     def test_create_non_default(self):
-        for re_type in RE_TYPE.all_types():
+        for re_type in RE_TYPE.all():
             re = Re(re_type)
             assert re == re_type
