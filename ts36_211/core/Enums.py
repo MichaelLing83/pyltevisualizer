@@ -4,9 +4,37 @@ Created on 23 dec 2013
 @author: Michael Duo Ling
 '''
 
+class ENUM:
+    '''
+    Enumeration class
+    '''
+    max = 0
+    str_list = list()
+    def __init__(self, prefix, key_list):
+        assert isinstance(prefix, str)
+        assert isinstance(key_list, tuple) or isinstance(key_list, list)
+        self.values = list()
+        for key in key_list:
+            assert isinstance(key, str), "{}({}) for ENUM is not a string.".format(key, type(key))
+            assert ' ' not in key
+            self.__setattr__(key, ENUM.max)
+            self.values.append(ENUM.max)
+            ENUM.str_list.append('.'.join((prefix, key)))
+            ENUM.max += 1
+
+    def all(self):
+        return self.values
+
+    @classmethod
+    def to_s(cls, v):
+        assert isinstance(v, int)
+        assert 0 <= v < cls.max
+        return cls.str_list[v]
+
+
 ENUM_MAX = 0
 ENUM_STRS = list()
-
+"""
 class RE_TYPE:
     '''
     Resource Element Type: used to mark each RE which PHY signal/channel is using this one.
@@ -19,7 +47,12 @@ class RE_TYPE:
     ENUM_MAX += size
     @staticmethod
     def all():
-        return range(RE_TYPE.AVAILABLE, RE_TYPE.AVAILABLE+RE_TYPE.size)
+        return range(RE_TYPE.AVAILABLE, RE_TYPE.AVAILABLE+RE_TYPE.size)"""
+
+RE_TYPE = ENUM( 'RE_TYPE',
+                ("AVAILABLE", "DL_AVAILABLE", "UL_AVAILABLE", "DWPTS", "GP",
+                "UPPTS", "CSRS_PORT0", "CSRS_PORT1", "CSRS_PORT2", "CSRS_PORT3",
+                "CSRS_PORT4", "CSRS_PORT5", "CSRS_PORT6", "CSRS_PORT7"))
 
 class SF_TYPE:
     '''
