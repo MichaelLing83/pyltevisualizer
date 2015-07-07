@@ -1,4 +1,4 @@
-from .core.Enums import CP_TYPE, DELTA_F, BW, RE_TYPE
+from .core.Enums import CP_TYPE, DELTA_F, BW, RE_TYPE, SF_TYPE
 from .core.Re import Re
 
 # 6.2.3 Resource blocks
@@ -91,20 +91,26 @@ def csrs_l(N_DL_symb, p):
     p: antenna port index
     '''
     assert 0 <= p <= 3
+    symbol_indice = ()
     if p in (0, 1):
-        return (0, N_DL_symb - 3)
+        symbol_indice = (0, N_DL_symb - 3)
     elif p in (2, 3):
-        return (1,)
+        symbol_indice = (1,)
+    # filter out illegal symbol indice due to DwPTS
+    return [x for x in symbol_indice if 0 <= x < N_DL_symb]
 
-def csrs(slot, bw, n_s, p, N_cell_ID):
+def csrs_ap(slot, bw, n_s, p, N_cell_ID):
     '''
+    Mark CSRS for one given Antenna Port.
+
     slot: Matrix representation of the slot
+    sf_type: subframe type for given slot
     bw: DL bandwidth
     n_s: slot index in one frame
     p: antenna port index
     '''
     N_DL_RB = BW.toRbNumber(bw)
-    re = RE_TYPE.__getattr__('CSRS_PORT{}'.format(p))
+    re = RE_TYPE.__getattribute__('CSRS_PORT{}'.format(p))
     v_shift = csrs_v_shift(N_cell_ID)
     for m in range(2 * N_DL_RB):
         for l in csrs_l(slot._size_x(), p):

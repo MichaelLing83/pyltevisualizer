@@ -12,3 +12,4 @@ class L1Config:
         self.ul_bandwidth = BW.N6
         self.delta_f = DELTA_F.KHZ_15
         self.antenna_ports_count = ANTENNA_PORTS_COUNT.AN4
+        self.PhysCellId = 0 # 0..503

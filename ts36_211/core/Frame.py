@@ -1,6 +1,6 @@
 from .Matrix import Matrix
-from .Enums import DUPLEX_MODE, BW, SF_TYPE, ANTENNA_PORTS_COUNT, RE_TYPE
-from ..c6 import N_DL_symb, csrs
+from .Enums import DUPLEX_MODE, BW, SF_TYPE, RE_TYPE, ANTENNA_PORTS_COUNT
+from ..c6 import N_DL_symb, csrs_ap
 from ..c4 import subframe_assignment, symbol_nr_DwPTS, symbol_nr_UpPTS, symbol_nr_GP
 from ..c5 import N_UL_symb
 from .Re import Re
@@ -33,6 +33,9 @@ class Frame(Matrix):
         # mark RE types
         self.__mark_all()
     def slot(self, index):
+        '''
+        Return: slot instance
+        '''
         assert 0 <= index <= 20
         start_index = 0
         sfa = subframe_assignment(self.l1_config.subframe_assignment)
@@ -55,13 +58,58 @@ class Frame(Matrix):
         else:
             length = N_DL_symb(dl_cp, delta_f)
         slot = self[start_index:start_index+length]
-        slot.sf_type = sfa[int(index/2)]
-        slot.n_s = index
         return slot
+    def nr_of_DL(self):
+        '''
+        Return: number of DL subframes
+        '''
+        return subframe_assignment(self.l1_config.subframe_assignment).count(SF_TYPE.D) * 2
+    def slot_DL(self, index):
+        '''
+        index: index out of all DL subframes in this frame
+
+        return: slot instance, n_s
+        '''
+        assert 0 <= index < self.nr_of_DL()
+        sfa = subframe_assignment(self.l1_config.subframe_assignment)
+        dl_slot_count = 0
+        for slot_index in range(20):
+            if sfa[int(slot_index/2)] == SF_TYPE.D:
+                if dl_slot_count == index:
+                    break;
+                else:
+                    dl_slot_count += 1
+        dl_slot = self.slot(slot_index)
+        return dl_slot, slot_index
+    def nr_of_UL(self):
+        '''
+        Return: number of UL subframes
+        '''
+        return subframe_assignment(self.l1_config.subframe_assignment).count(SF_TYPE.U) * 2
+    def slot_UL(self, index):
+        '''
+        index: index out of all UL subframes in this frame
+
+        return: slot instance, n_s
+        '''
+        assert 0 <= index < self.nr_of_UL()
+        sfa = subframe_assignment(self.l1_config.subframe_assignment)
+        ul_slot_count = 0
+        for slot_index in range(20):
+            if sfa[int(slot_index/2)] == SF_TYPE.U:
+                if ul_slot_count == index:
+                    break;
+                else:
+                    ul_slot_count += 1
+        ul_slot = self.slot(slot_index)
+        return ul_slot, slot_index
     def nr_of_GP(self):
         sfa = subframe_assignment(self.l1_config.subframe_assignment)
         return sfa.count(SF_TYPE.S)
     def slot_GP(self, index):
+        '''
+        Return: slot instance, n_s
+        '''
         assert 0 <= 0 < self.nr_of_GP()
         start_index = 0
         dl_cp = self.l1_config.dl_cyclicPrefixLength
@@ -84,11 +132,14 @@ class Frame(Matrix):
                     start_index += symbol_nr_DwPTS(ssp, dl_cp, delta_f) + symbol_nr_GP(ssp, dl_cp, ul_cp, delta_f) + symbol_nr_UpPTS(ssp, dl_cp, ul_cp)
         logging.getLogger(__name__).debug("start_index={}, symbol_nr_GP(ssp, dl_cp, ul_cp, delta_f)={}".format(start_index, symbol_nr_GP(ssp, dl_cp, ul_cp, delta_f)))
         gp = self[start_index:start_index+symbol_nr_GP(ssp, dl_cp, ul_cp, delta_f)]
-        return gp
+        return gp, i
     def nr_of_UpPTS(self):
         sfa = subframe_assignment(self.l1_config.subframe_assignment)
         return sfa.count(SF_TYPE.S)
     def slot_UpPTS(self, index):
+        '''
+        Return: slot instance, n_s
+        '''
         assert 0 <= index < self.nr_of_UpPTS()
         start_index = 0
         dl_cp = self.l1_config.dl_cyclicPrefixLength
@@ -112,7 +163,7 @@ class Frame(Matrix):
                     else:
                         uppts_slot_count += 1
                         start_index += N_UL_symb(ul_cp)
-        return self[start_index:start_index+symbol_nr_UpPTS(ssp, dl_cp, ul_cp)]
+        return self[start_index:start_index+symbol_nr_UpPTS(ssp, dl_cp, ul_cp)], slot_index
     def nr_of_DwPTS(self):
         sfa = subframe_assignment(self.l1_config.subframe_assignment)
         return sfa.count(SF_TYPE.S)
@@ -128,6 +179,8 @@ class Frame(Matrix):
         '''
         index: index of DwPTS in this frame. Note that one DwPTS can be split
                 into two if it's longer than one slot.
+
+        return: slot instance, n_s
         '''
         assert 0 <= index < self.nr_of_DwPTS_slots()
         start_index = 0
@@ -175,24 +228,24 @@ class Frame(Matrix):
                 dwpts = self[start_index:start_index+(symbol_nr_DwPTS(ssp, dl_cp, delta_f)-N_DL_symb(dl_cp, delta_f))]
         else:
             dwpts = self[start_index:start_index+symbol_nr_DwPTS(ssp, dl_cp, delta_f)]
-        return dwpts
+        return dwpts, slot_index
     def __mark_GP(self):
         for index in range(self.nr_of_GP()):
-            gp = self.slot_GP(index)
+            gp, n_s = self.slot_GP(index)
             X, Y = gp._sizes()
             for x in range(X):
                 for y in range(Y):
                     gp[x][y] = Re(RE_TYPE.GP)
     def __mark_DwPTS(self):
         for index in range(self.nr_of_DwPTS_slots()):
-            dwpts_slot = self.slot_DwPTS(index)
+            dwpts_slot, n_s = self.slot_DwPTS(index)
             X, Y = dwpts_slot._sizes()
             for x in range(X):
                 for y in range(Y):
                     dwpts_slot[x][y] = Re(RE_TYPE.DWPTS)
     def __mark_UpPTS(self):
         for index in range(self.nr_of_UpPTS()):
-            uppts = self.slot_UpPTS(index)
+            uppts, n_s = self.slot_UpPTS(index)
             X, Y = uppts._sizes()
             for x in range(X):
                 for y in range(Y):
@@ -215,9 +268,24 @@ class Frame(Matrix):
                 for x in range(X):
                     for y in range(Y):
                         ul_slot[x][y] = Re(RE_TYPE.UL_AVAILABLE)
+    def __mark_CSRS(self):
+        N_cell_ID = self.l1_config.PhysCellId
+        bw = self.l1_config.dl_bandwidth
+        sfa = subframe_assignment(self.l1_config.subframe_assignment)
+        for slot_index in range(20):
+            if sfa[int(slot_index/2)] == SF_TYPE.D:
+                dl_slot = self.slot(slot_index)
+                for p in range(ANTENNA_PORTS_COUNT.to_int(self.l1_config.antenna_ports_count)):
+                    csrs_ap(dl_slot, bw, slot_index, p, N_cell_ID)
+        for index in range(self.nr_of_DwPTS_slots()):
+            dwpts_slot, n_s = self.slot_DwPTS(index)
+            for p in range(ANTENNA_PORTS_COUNT.to_int(self.l1_config.antenna_ports_count)):
+                csrs_ap(dwpts_slot, bw, n_s, p, N_cell_ID)
+
     def __mark_all(self):
         self.__mark_GP()
         self.__mark_DwPTS()
         self.__mark_UpPTS()
         self.__mark_DL()
         self.__mark_UL()
+        self.__mark_CSRS()
