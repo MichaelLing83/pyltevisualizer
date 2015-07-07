@@ -1,7 +1,7 @@
 # pyltevisualizer
-Automatically exported from code.google.com/p/pyltevisualizer
+[![Build Status](https://travis-ci.org/MichaelLing83/pyltevisualizer.svg?branch=master)](https://travis-ci.org/MichaelLing83/pyltevisualizer)
 
-Now continues on GitHub. After years, there are so many changes in the world of LTE (or LTE-A, -B, ...). It is time to restart this project!
+This used to be code.google.com/p/pyltevisualizer, and now it continues on GitHub. After years, there are so many changes in the world of LTE (or LTE-A, -B, ...). It is time to restart this project!
 
 
 ## Requirements
