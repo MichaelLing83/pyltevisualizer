@@ -1,1 +1,1 @@
-__all__ = ['Matrix', 'Plotter']
+__all__ = ['Matrix', 'Plotter', 'Enums', 'Frame']

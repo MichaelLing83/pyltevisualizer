@@ -1,1 +1,1 @@
-__all__ = ['TestMatrix', 'TestPlotter']
+__all__ = ['TestMatrix', 'TestPlotter', 'TestFrame']

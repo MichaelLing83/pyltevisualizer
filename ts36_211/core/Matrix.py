@@ -1,3 +1,5 @@
+import logging
+
 class _Array:
     def __init__(self):
         assert False, "_Array base class should not be instantilized!"
@@ -77,15 +79,14 @@ class Matrix(_Array):
             self.__end_y = end_y
         else:
             self.__end_y = self.__size_y
-        if data:
+        if data != None:
             self.__data = data
         else:
             self.__data = dict()
+        logging.getLogger(__name__).debug("data={}, self.__data={}".format(id(data), id(self.__data)))
         self.debug = False
     def _sizes(self):
         return (self._size_x(), self._size_y())
-    def shape(self):
-        return self._sizes()
     def _size_x(self):
         return self.__end_x - self.__start_x
     def _size_y(self):
@@ -124,6 +125,7 @@ class Matrix(_Array):
             if start_x == 0 and end_x == self.__size_x:
                 return self
             else:
+                logging.getLogger(__name__).debug("self.__size_x={}, self.__size_y={}, self._class={},start_x={}, 0={}, end_x={}, self.__size_y={}, self.__data={}".format(self.__size_x, self.__size_y, self._class,start_x, 0, end_x, self.__size_y, id(self.__data)))
                 return Matrix(self.__size_x, self.__size_y, self._class,
                               start_x, 0, end_x, self.__size_y, self.__data)
     def __setitem__(self, selection, value):
@@ -136,6 +138,8 @@ class Matrix(_Array):
             column, row = selection
             assert 0 <= column < self._size_x()
             assert 0 <= row < self._size_y()
+            column += self.__start_x
+            row += self.__start_y
             self.__data[(column, row)] = value
         return value
     def count(self, func):

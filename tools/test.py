@@ -12,6 +12,7 @@ class Args:
     pass
 
 parser = argparse.ArgumentParser(description='Run nosetests from current directory.')
+
 parser.parse_args(namespace=Args)
 
-nose.main()
+nose.main(argv=['-d', '-x', '--pdb', '-s'])

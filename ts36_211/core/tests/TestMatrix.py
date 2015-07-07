@@ -42,18 +42,27 @@ class TestMatrix(unittest.TestCase):
         # slicing to get all -> the same matrix instance
         assert isinstance(matrix[:], Matrix)
         assert matrix[:] is matrix
+        assert matrix[:]._Matrix__data is matrix._Matrix__data
         assert matrix[0:] is matrix
+        assert matrix[0:]._Matrix__data is matrix._Matrix__data
         assert matrix[:_X_SIZE] is matrix
+        assert matrix[:_X_SIZE]._Matrix__data is matrix._Matrix__data
         assert matrix[(-1 * _X_SIZE):] is matrix
+        assert matrix[(-1 * _X_SIZE):]._Matrix__data is matrix._Matrix__data
 
         # slicing to get one Column
         assert isinstance(matrix[0], Column)
+        assert matrix[0]._Column__matrix._Matrix__data is matrix._Matrix__data
 
         # slicing to get multiple adjacent columns
         assert isinstance(matrix[:3], Matrix)
         assert matrix[:3]._sizes() == (3, _Y_SIZE)
-        print(matrix[-3:]._sizes(), (3, _Y_SIZE), matrix[-3:]._sizes() == (3, _Y_SIZE))
+        assert matrix[:3]._Matrix__data is matrix._Matrix__data
         assert matrix[-3:]._sizes() == (3, _Y_SIZE)
+        assert matrix[-3:]._Matrix__data is matrix._Matrix__data
+        assert matrix[3:5]._sizes() == (2, _Y_SIZE)
+        assert matrix[3:5]._Matrix__data is matrix._Matrix__data
+
     def test_count(self):
         # 100 elements for x-axis, and 90 for y-axis
         matrix = Matrix(_X_SIZE, _Y_SIZE, _CLASS)
