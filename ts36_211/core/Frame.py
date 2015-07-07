@@ -1,6 +1,6 @@
 from .Matrix import Matrix
 from .Enums import DUPLEX_MODE, BW, SF_TYPE, RE_TYPE, ANTENNA_PORTS_COUNT
-from ..c6 import N_DL_symb, csrs_ap
+from ..c6 import N_DL_symb, csrs_ap, pss_n_s_l, sss_n_s_l, pss_k_list, pss_k_reserved_list, sss_k_list, sss_k_reserved_list, is_csrs_reserved, pbch_n_s_l, pbch_k_list
 from ..c4 import subframe_assignment, symbol_nr_DwPTS, symbol_nr_UpPTS, symbol_nr_GP
 from ..c5 import N_UL_symb
 from .Re import Re
@@ -281,6 +281,52 @@ class Frame(Matrix):
             dwpts_slot, n_s = self.slot_DwPTS(index)
             for p in range(ANTENNA_PORTS_COUNT.to_int(self.l1_config.antenna_ports_count)):
                 csrs_ap(dwpts_slot, bw, n_s, p, N_cell_ID)
+    def __mark_PSS(self):
+        duplex_mode = self.l1_config.duplexMode
+        dl_cp = self.l1_config.dl_cyclicPrefixLength
+        delta_f = self.l1_config.delta_f
+        N_DL_RB = BW.toRbNumber(self.l1_config.dl_bandwidth)
+        N_RB_sc = BW.N_RB_sc(dl_cp, delta_f)
+        n_s_list, l = pss_n_s_l(duplex_mode, N_DL_symb(dl_cp, delta_f))
+        k_list = pss_k_list(N_DL_RB, N_RB_sc)
+        k_reserve_list = pss_k_reserved_list(N_DL_RB, N_RB_sc)
+        for n_s in n_s_list:
+            slot = self.slot(n_s)
+            for k in k_list:
+                slot[l][k] = Re(RE_TYPE.PSS)
+            for k in k_reserve_list:
+                slot[l][k] = Re(RE_TYPE.RESERVED)
+    def __mark_SSS(self):
+        duplex_mode = self.l1_config.duplexMode
+        dl_cp = self.l1_config.dl_cyclicPrefixLength
+        delta_f = self.l1_config.delta_f
+        N_DL_RB = BW.toRbNumber(self.l1_config.dl_bandwidth)
+        N_RB_sc = BW.N_RB_sc(dl_cp, delta_f)
+        n_s_list, l = sss_n_s_l(duplex_mode, N_DL_symb(dl_cp, delta_f))
+        k_list = sss_k_list(N_DL_RB, N_RB_sc)
+        k_reserve_list = sss_k_reserved_list(N_DL_RB, N_RB_sc)
+        for n_s in n_s_list:
+            slot = self.slot(n_s)
+            for k in k_list:
+                slot[l][k] = Re(RE_TYPE.SSS)
+            for k in k_reserve_list:
+                slot[l][k] = Re(RE_TYPE.RESERVED)
+    def __mark_PBCH(self):
+        dl_cp = self.l1_config.dl_cyclicPrefixLength
+        delta_f = self.l1_config.delta_f
+        bw = self.l1_config.dl_bandwidth
+        N_DL_RB = BW.toRbNumber(self.l1_config.dl_bandwidth)
+        N_RB_sc = BW.N_RB_sc(dl_cp, delta_f)
+        N_cell_ID = self.l1_config.PhysCellId
+        n_s, l_list = pbch_n_s_l()
+        k_list = pbch_k_list(N_DL_RB, N_RB_sc)
+        slot = self.slot(n_s)
+        for l in l_list:
+            for k in k_list:
+                if not is_csrs_reserved(l, k, bw, n_s, N_cell_ID, N_DL_symb(dl_cp, delta_f)):
+                    slot[l][k] = Re(RE_TYPE.PBCH)
+
+
 
     def __mark_all(self):
         self.__mark_GP()
@@ -289,3 +335,6 @@ class Frame(Matrix):
         self.__mark_DL()
         self.__mark_UL()
         self.__mark_CSRS()
+        self.__mark_PSS()
+        self.__mark_SSS()
+        self.__mark_PBCH()

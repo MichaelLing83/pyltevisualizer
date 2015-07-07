@@ -39,9 +39,9 @@ ENUM_MAX = 0
 ENUM_STRS = list()
 
 RE_TYPE = ENUM( 'RE_TYPE',
-                ("AVAILABLE", "DL_AVAILABLE", "UL_AVAILABLE", "DWPTS", "GP",
-                "UPPTS", "CSRS_PORT0", "CSRS_PORT1", "CSRS_PORT2", "CSRS_PORT3",
-                "CSRS_PORT4", "CSRS_PORT5", "CSRS_PORT6", "CSRS_PORT7"))
+                ("RESERVED", "CSRS_PORT0", "CSRS_PORT1", "CSRS_PORT2", "CSRS_PORT3",
+                "CSRS_PORT4", "CSRS_PORT5", "CSRS_PORT6", "CSRS_PORT7", "PBCH", "AVAILABLE",
+                "DL_AVAILABLE", "UL_AVAILABLE", "DWPTS", "GP", "UPPTS", "PSS", "SSS"))
 def __RE_TYPE_all_CSRS():
     return (RE_TYPE.CSRS_PORT0,RE_TYPE.CSRS_PORT1,RE_TYPE.CSRS_PORT2,
             RE_TYPE.CSRS_PORT3,RE_TYPE.CSRS_PORT4,RE_TYPE.CSRS_PORT5
@@ -73,9 +73,9 @@ def __BW_toReNumber(bw, cpType, delta_f):
     '''
     Calculate number of sub-carriers for the whole bandwidth.
     '''
-    return BW.toRbNumber(bw) * BW.calc__N_RB_sc(cpType, delta_f)
+    return BW.toRbNumber(bw) * BW.N_RB_sc(cpType, delta_f)
 BW.toRbNumber = __BW_toRbNumber
-BW.calc__N_RB_sc = __BW_calc__N_RB_sc
+BW.N_RB_sc = __BW_calc__N_RB_sc
 BW.toReNumber = __BW_toReNumber
 
 DUPLEX_MODE = ENUM('DUPLEX_MODE', ('FDD', 'TDD'))
