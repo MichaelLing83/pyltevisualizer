@@ -1,10 +1,10 @@
-from .core.Enums import ENUM, SF_TYPE, SUBFRAME_ASSIGNMENT, SPECIAL_SUBFRAME_PATTERNS, CP_TYPE, DELTA_F
+from .core.Enums import ENUM, SF_TYPE, SUBFRAME_ASSIGNMENT, SPECIAL_SUBFRAME_PATTERNS, CP_TYPE
 from .c5 import cyclic_prefix_in_Ts as ul_cp_in_Ts
 from .c5 import N as N_ul
 from .c5 import N_UL_symb
-from .c6 import N_DL_symb
-from .c6 import N as N_dl
-from .c6 import cyclic_prefix_in_Ts as dl_cp_in_Ts
+from .c6.s2 import N_DL_symb
+from .c6.s12 import N as N_dl
+from .c6.s12 import cyclic_prefix_in_Ts as dl_cp_in_Ts
 import logging
 
 T_f = 10 / 1000         # one frame in seconds

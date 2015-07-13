@@ -35,13 +35,13 @@ class TestFrame(unittest.TestCase):
             for y in range(72):
                 assert frame[x][y] == RE_TYPE.GP
         # DwPTS
-        assert frame.count(lambda x: x == RE_TYPE.DWPTS) == 72 * 10 *2 - 5*4*6*2
+        assert frame.count(lambda x: x == RE_TYPE.DWPTS) == 72 * 10 *2 - 5*4*6*2 - 4*4*2  # all - CSRS - PCFICH
         for x in range(14, 14+10):
             for y in range(72):
-                assert frame[x][y] == RE_TYPE.DWPTS or frame[x][y] in RE_TYPE.all_CSRS()
+                assert frame[x][y] in (RE_TYPE.DWPTS, RE_TYPE.PCFICH) or frame[x][y] in RE_TYPE.all_CSRS()
         for x in range(14*5+14, 14*5+14+10):
             for y in range(72):
-                assert frame[x][y] == RE_TYPE.DWPTS or frame[x][y] in RE_TYPE.all_CSRS()
+                assert frame[x][y] in (RE_TYPE.DWPTS, RE_TYPE.PCFICH) or frame[x][y] in RE_TYPE.all_CSRS()
         # UpPTS
         assert frame.count(lambda x: x == RE_TYPE.UPPTS) == 72 * 2 *2
         for x in range(14+10+2, 14+10+2+2):

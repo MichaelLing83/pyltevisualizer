@@ -1,11 +1,11 @@
 import unittest
 from nose.tools import eq_
-from ..c6 import csrs_v
-from ..core.Enums import SPECIAL_SUBFRAME_PATTERNS, CP_TYPE, DELTA_F, DUPLEX_MODE, SUBFRAME_ASSIGNMENT, BW, RE_TYPE
-from ..core.Frame import Frame
-from ..core.Plotter import Plotter
-from ..core.Re import Re
-from ..L1Config import L1Config
+from ..s10 import csrs_v
+from ...core.Enums import SPECIAL_SUBFRAME_PATTERNS, CP_TYPE, DELTA_F, DUPLEX_MODE, SUBFRAME_ASSIGNMENT, BW, RE_TYPE
+from ...core.Frame import Frame
+from ...core.Plotter import Plotter
+from ...core.Re import Re
+from ...L1Config import L1Config
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
