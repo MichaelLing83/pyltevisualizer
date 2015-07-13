@@ -41,6 +41,6 @@ def pcfich_reg(pcfich_index, n_s, l, N_DL_symb, N_RB_sc, N_cell_ID, bw, antenna_
     logging.getLogger(__name__).debug("rb_index, index = {}, {}".format(rb_index, index))
     reg = reg_without_csrs(N_cell_ID, bw, rb_index, n_s, l, index, N_DL_symb, N_RB_sc, antenna_ports_count, dl_cp)
     logging.getLogger(__name__).debug("reg = {}".format(reg))
-    reg = [k+rb_index*N_RB_sc for k in reg]
+    reg = [k_+rb_index*N_RB_sc for k_ in reg]
     logging.getLogger(__name__).debug("reg = {}".format(reg))
     return reg
