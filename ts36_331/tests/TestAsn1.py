@@ -11,6 +11,17 @@ class TestAsn1(unittest.TestCase):
         eq_(e.code(), Bits(uint=0, length=3))
         e.set(E.three)
         eq_(e.code(), Bits(uint=3, length=3))
+
+    def test_BIT_STRING(self):
+        BS = BIT_STRING('BitString', 9)
+        bs = BS(True)
+        bs.set(Bits(uint=11, length=9))
+        eq_(bs.code(), Bits(uint=11, length=9))
+        bs.set(11)
+        eq_(bs.code(), Bits(uint=11, length=9))
+        bs.set(b'a')
+        eq_(bs.code(), Bits(bin='0b001100001'))
+
     '''def test_MIB(self):
         eq_(len(dl_Bandwidth), 3)
         eq_(dl_Bandwidth.n6, 0)

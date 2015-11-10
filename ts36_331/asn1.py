@@ -34,18 +34,32 @@ def BIT_STRING(name, length):
     assert length > 0
     d = dict()
     d['length'] = length
-    def init(self, isRequired, bits):
+    def init(self, isRequired, bits=0):
         self.isRequired = isRequired
+        self.set(bits)
+    d['__init__'] = init
+    def _len(self):
+        return self.__class__.length
+    d['__len__'] = _len
+    def set(self, bits):
         if isinstance(bits, int):
             assert 0 <= bits < 2**self.length
+            bits = Bits(uint=bits, length=self.length)
         elif isinstance(bits, Bits):
             assert bits.length == self.length
         elif isinstance(bits, str):
             bits = Bits(bytes=bits.encode('ascii'), length=self.length)
         elif isinstance(bits, bytes):
-            assert len(bits) < self.length
-            bits = Bits(bytes=bits, length=self.length)
+            assert 8 * len(bits) <= self.length
+            if 8 * len(bits) < self.length:
+                bits = b'0' * ceil((self.length - 8*len(bits))/8) +  bits
+            bits = Bits(bytes=bits, length=self.length, offset=len(bits)*8-self.length)
         self.bits = bits
+    d['set'] = set
+    def code(self):
+        return self.bits
+    d['code'] = code
+    return type(name, (object,), d)
 '''
 class BIT_STRING:
     def __init__(self, length):
