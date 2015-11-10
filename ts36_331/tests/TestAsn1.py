@@ -3,7 +3,15 @@ from nose.tools import eq_
 from ..asn1 import *
 
 class TestAsn1(unittest.TestCase):
-    def test_mib(self):
+    def test_ENUMERATED(self):
+        E = ENUMERATED('Enum', 'zero', 'one', 'two', 'three', 'four')
+        eq_(E.__name__, 'Enum')
+        eq_(E.length, 3)
+        e = E(False)
+        eq_(e.code(), Bits(uint=0, length=3))
+        e.set(E.three)
+        eq_(e.code(), Bits(uint=3, length=3))
+    '''def test_MIB(self):
         eq_(len(dl_Bandwidth), 3)
         eq_(dl_Bandwidth.n6, 0)
         eq_(dl_Bandwidth.n15, 1)
@@ -16,4 +24,4 @@ class TestAsn1(unittest.TestCase):
         eq_(dl_Bandwidth.code('n25'), Bits(int=2, length=3))
         eq_(dl_Bandwidth.code('n50'), Bits(int=3, length=3))
         eq_(dl_Bandwidth.code('n75'), Bits(uint=4, length=3))
-        eq_(dl_Bandwidth.code('n100'), Bits(uint=5, length=3))
+        eq_(dl_Bandwidth.code('n100'), Bits(uint=5, length=3))'''
