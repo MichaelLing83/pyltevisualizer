@@ -60,6 +60,22 @@ def BIT_STRING(name, length):
         return self.bits
     d['code'] = code
     return type(name, (object,), d)
+
+def SEQUENCE(name, *members):
+    assert len(members) > 0
+    for member in members:
+        print(member)
+        assert not isinstance(member, type) # should not be a class
+    d = dict()
+    l = list()
+    length = 0
+    for member in members:
+        d[str(member.__class__).split('.')[-1]] = member
+        l.append(member)
+        length += len(member)
+    d['length'] = length
+    d['members'] = l
+    return type(name, (object,), d)
 '''
 class BIT_STRING:
     def __init__(self, length):

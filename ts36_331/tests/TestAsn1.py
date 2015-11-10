@@ -1,6 +1,7 @@
 import unittest
 from nose.tools import eq_
-from ..asn1 import *
+from ..asn1 import ENUMERATED, BIT_STRING, SEQUENCE
+from ...misc.bitstring.bitstring import Bits
 
 class TestAsn1(unittest.TestCase):
     def test_ENUMERATED(self):
@@ -21,6 +22,11 @@ class TestAsn1(unittest.TestCase):
         eq_(bs.code(), Bits(uint=11, length=9))
         bs.set(b'a')
         eq_(bs.code(), Bits(bin='0b001100001'))
+
+    def test_SEQUENCE(self):
+        A = ENUMERATED('A', 'zero', 'one', 'two', 'three')
+        B = BIT_STRING('B', 6)
+        Seq = SEQUENCE('SEQ', A(True), B(False))
 
     '''def test_MIB(self):
         eq_(len(dl_Bandwidth), 3)
